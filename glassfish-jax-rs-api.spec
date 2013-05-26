@@ -3,7 +3,7 @@
 %global oname javax.ws.rs-api
 Name:          glassfish-jax-rs-api
 Version:       2.0
-Release:       1%{?dist}
+Release:       2%{?dist}
 Summary:       JAX-RS API Specification (JSR 339)
 Group:         Development/Libraries
 License:       CDDL or GPLv2 with exceptions
@@ -28,6 +28,7 @@ BuildRequires: maven-resources-plugin
 BuildRequires: maven-source-plugin
 BuildRequires: maven-surefire-plugin
 BuildRequires: maven-surefire-provider-junit4
+BuildRequires: spec-version-maven-plugin
 
 BuildRequires: make
 BuildRequires: texlive-amsfonts
@@ -79,14 +80,13 @@ find . -name '*.jar' -delete
 find . -name '*.class' -delete
 
 %pom_remove_plugin org.glassfish.copyright:glassfish-copyright-maven-plugin src/jax-rs-api
-%pom_remove_plugin org.glassfish.build:spec-version-maven-plugin src/jax-rs-api
+
 # Reporting mojo's can only be called from ReportDocumentRender
 %pom_remove_plugin org.apache.maven.plugins:maven-jxr-plugin src/jax-rs-api
 %pom_remove_plugin org.apache.maven.plugins:maven-checkstyle-plugin src/jax-rs-api
 %pom_remove_plugin org.codehaus.mojo:buildnumber-maven-plugin src/jax-rs-api
 
 %pom_xpath_remove "pom:build/pom:finalName" src/jax-rs-api
-%pom_xpath_remove "pom:build/pom:pluginManagement/pom:plugins/pom:plugin[pom:artifactId ='maven-bundle-plugin']/pom:configuration/pom:instructions/pom:Bundle-Version"  src/jax-rs-api
 
 sed -i "s|dvips|pdftex|" spec/spec.tex
 
@@ -126,6 +126,9 @@ cp -pr src/jax-rs-api/target/site/apidocs/* %{buildroot}%{_javadocdir}/%{name}
 %doc copyright.txt spec/spec.pdf src/examples
 
 %changelog
+* Sun May 26 2013 gil cattaneo <puntogil@libero.it> 2.0-2
+- rebuilt with spec-version-maven-plugin support
+
 * Tue May 07 2013 gil cattaneo <puntogil@libero.it> 2.0-1
 - update to 2.0
 

@@ -3,9 +3,8 @@
 %global oname javax.ws.rs-api
 Name:          glassfish-jax-rs-api
 Version:       2.0
-Release:       2%{?dist}
+Release:       3%{?dist}
 Summary:       JAX-RS API Specification (JSR 339)
-Group:         Development/Libraries
 License:       CDDL or GPLv2 with exceptions
 URL:           http://jax-rs-spec.java.net/
 # git clone git://java.net/jax-rs-spec~git glassfish-jax-rs-api
@@ -20,13 +19,9 @@ BuildRequires: junit
 
 #BuildRequires: buildnumber-maven-plugin
 BuildRequires: maven-local
-BuildRequires: maven-compiler-plugin
-BuildRequires: maven-jar-plugin
-BuildRequires: maven-javadoc-plugin
 BuildRequires: maven-plugin-bundle
 BuildRequires: maven-resources-plugin
 BuildRequires: maven-source-plugin
-BuildRequires: maven-surefire-plugin
 BuildRequires: maven-surefire-provider-junit4
 BuildRequires: spec-version-maven-plugin
 
@@ -54,21 +49,18 @@ BuildRequires: texlive-texconfig
 BuildRequires: texlive-times
 BuildRequires: texlive-tools
 
-Requires:      java
 BuildArch:     noarch
 
 %description
 JAX-RS Java API for RESTful Web Services (JSR 339).
 
 %package javadoc
-Group:         Documentation
 Summary:       Javadoc for %{name}
 
 %description javadoc
 This package contains javadoc for %{name}.
 
 %package manual
-Group:         Documentation
 Summary:       Manual for %{name}
 
 %description manual
@@ -95,37 +87,35 @@ sed -i 's/\r//' copyright.txt src/examples/pom.xml
 
 %build
 
-mvn-rpmbuild -f src/jax-rs-api/pom.xml package javadoc:aggregate
+(
+cd src/jax-rs-api
+%mvn_file :%{oname} %{name}
+%mvn_build
+)
 cd spec
 make clean all
 
 %install
 
-mkdir -p %{buildroot}%{_javadir}
-install -m 644 src/jax-rs-api/target/%{oname}-%{namedversion}.jar \
-  %{buildroot}%{_javadir}/%{name}.jar
+(
+cd src/jax-rs-api
+%mvn_install
+)
 
-mkdir -p %{buildroot}%{_mavenpomdir}
-install -pm 644 src/jax-rs-api/pom.xml %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
-%add_maven_depmap
-
-mkdir -p %{buildroot}%{_javadocdir}/%{name}
-cp -pr src/jax-rs-api/target/site/apidocs/* %{buildroot}%{_javadocdir}/%{name}
-
-%files
-%{_javadir}/%{name}.jar
-%{_mavenpomdir}/JPP-%{name}.pom
-%{_mavendepmapfragdir}/%{name}
+%files -f src/jax-rs-api/.mfiles
 %doc copyright.txt
 
-%files javadoc
-%{_javadocdir}/%{name}
+%files javadoc -f src/jax-rs-api/.mfiles-javadoc
 %doc copyright.txt
 
 %files manual
 %doc copyright.txt spec/spec.pdf src/examples
 
 %changelog
+* Mon Jul 08 2013 gil cattaneo <puntogil@libero.it> 2.0-3
+- switch to XMvn
+- minor changes to adapt to current guideline
+
 * Sun May 26 2013 gil cattaneo <puntogil@libero.it> 2.0-2
 - rebuilt with spec-version-maven-plugin support
 

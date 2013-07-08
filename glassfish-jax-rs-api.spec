@@ -25,6 +25,13 @@ BuildRequires: maven-source-plugin
 BuildRequires: maven-surefire-provider-junit4
 BuildRequires: spec-version-maven-plugin
 
+# Disabled on rawhide: texlive is broken
+%if 0
+# This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013)
+# restricted \write18 enabled.
+# kpathsea: Running mktexfmt pdflatex.fmt
+# I can't find the format file `pdflatex.fmt'!
+# make: *** [spec.pdf] Error 1
 BuildRequires: make
 BuildRequires: texlive-amsfonts
 BuildRequires: texlive-base
@@ -48,6 +55,7 @@ BuildRequires: texlive-psnfss
 BuildRequires: texlive-texconfig
 BuildRequires: texlive-times
 BuildRequires: texlive-tools
+%endif
 
 BuildArch:     noarch
 
@@ -60,11 +68,13 @@ Summary:       Javadoc for %{name}
 %description javadoc
 This package contains javadoc for %{name}.
 
+%if 0
 %package manual
 Summary:       Manual for %{name}
 
 %description manual
 This package contains documentation for %{name}.
+%endif
 
 %prep
 %setup -q -n %{name}-%{namedversion}
@@ -92,8 +102,11 @@ cd src/jax-rs-api
 %mvn_file :%{oname} %{name}
 %mvn_build
 )
+
+%if 0
 cd spec
 make clean all
+%endif
 
 %install
 
@@ -108,8 +121,10 @@ cd src/jax-rs-api
 %files javadoc -f src/jax-rs-api/.mfiles-javadoc
 %doc copyright.txt
 
+%if 0
 %files manual
 %doc copyright.txt spec/spec.pdf src/examples
+%endif
 
 %changelog
 * Mon Jul 08 2013 gil cattaneo <puntogil@libero.it> 2.0-3

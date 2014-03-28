@@ -3,7 +3,7 @@
 %global oname javax.ws.rs-api
 Name:          glassfish-jax-rs-api
 Version:       2.0
-Release:       4%{?dist}
+Release:       5%{?dist}
 Summary:       JAX-RS API Specification (JSR 339)
 License:       CDDL or GPLv2 with exceptions
 URL:           http://jax-rs-spec.java.net/
@@ -127,6 +127,9 @@ cd src/jax-rs-api
 %endif
 
 %changelog
+* Fri Mar 28 2014 Michael Simacek <msimacek@redhat.com> - 2.0-5
+- Use Requires: java-headless rebuild (#1067528)
+
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.0-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 

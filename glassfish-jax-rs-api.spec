@@ -22,7 +22,7 @@ BuildRequires: maven-local
 BuildRequires: maven-plugin-bundle
 BuildRequires: maven-resources-plugin
 BuildRequires: maven-source-plugin
-BuildRequires: maven-surefire-provider-junit4
+BuildRequires: maven-surefire-provider-junit
 BuildRequires: spec-version-maven-plugin
 
 # Disabled on rawhide: texlive is broken

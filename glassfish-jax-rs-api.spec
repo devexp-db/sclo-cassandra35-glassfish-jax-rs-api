@@ -3,7 +3,7 @@
 %global oname javax.ws.rs-api
 Name:          glassfish-jax-rs-api
 Version:       2.0
-Release:       6%{?dist}
+Release:       7%{?dist}
 Summary:       JAX-RS API Specification (JSR 339)
 License:       CDDL or GPLv2 with exceptions
 URL:           http://jax-rs-spec.java.net/
@@ -11,9 +11,7 @@ URL:           http://jax-rs-spec.java.net/
 # (cd glassfish-jax-rs-api/ && git archive --format=tar --prefix=glassfish-jax-rs-api-2.0/ 2.0 | xz > ../glassfish-jax-rs-api-2.0-src-git.tar.xz)
 Source0:       %{name}-%{namedversion}-src-git.tar.xz
 
-BuildRequires: java-devel
 BuildRequires: jvnet-parent
-
 # test deps
 BuildRequires: junit
 
@@ -22,7 +20,6 @@ BuildRequires: maven-local
 BuildRequires: maven-plugin-bundle
 BuildRequires: maven-resources-plugin
 BuildRequires: maven-source-plugin
-BuildRequires: maven-surefire-provider-junit
 BuildRequires: spec-version-maven-plugin
 
 # Disabled on rawhide: texlive is broken
@@ -116,17 +113,21 @@ cd src/jax-rs-api
 )
 
 %files -f src/jax-rs-api/.mfiles
-%doc copyright.txt
+%license copyright.txt
 
 %files javadoc -f src/jax-rs-api/.mfiles-javadoc
-%doc copyright.txt
+%license copyright.txt
 
 %if 0
 %files manual
-%doc copyright.txt spec/spec.pdf src/examples
+%doc spec/spec.pdf src/examples
+%license copyright.txt
 %endif
 
 %changelog
+* Tue Feb 03 2015 gil cattaneo <puntogil@libero.it> 2.0-7
+- introduce license macro
+
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.0-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 

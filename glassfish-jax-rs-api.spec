@@ -2,24 +2,21 @@
 %global namedversion %{version}%{?namedreltag}
 %global oname javax.ws.rs-api
 Name:          glassfish-jax-rs-api
-Version:       2.0
-Release:       7%{?dist}
+Version:       2.0.1
+Release:       1%{?dist}
 Summary:       JAX-RS API Specification (JSR 339)
 License:       CDDL or GPLv2 with exceptions
 URL:           http://jax-rs-spec.java.net/
-# git clone git://java.net/jax-rs-spec~git glassfish-jax-rs-api
-# (cd glassfish-jax-rs-api/ && git archive --format=tar --prefix=glassfish-jax-rs-api-2.0/ 2.0 | xz > ../glassfish-jax-rs-api-2.0-src-git.tar.xz)
-Source0:       %{name}-%{namedversion}-src-git.tar.xz
+# git clone git://java.net/jax-rs-spec~api glassfish-jax-rs-api
+# (cd glassfish-jax-rs-api/ && git archive --format=tar --prefix=glassfish-jax-rs-api-2.0.1/ 2.0.1 | xz > ../glassfish-jax-rs-api-2.0.1.tar.xz)
+Source0:       %{name}-%{namedversion}.tar.xz
 
-BuildRequires: jvnet-parent
-# test deps
 BuildRequires: junit
+BuildRequires: jvnet-parent
 
-#BuildRequires: buildnumber-maven-plugin
 BuildRequires: maven-local
 BuildRequires: maven-plugin-bundle
 BuildRequires: maven-resources-plugin
-BuildRequires: maven-source-plugin
 BuildRequires: spec-version-maven-plugin
 
 # Disabled on rawhide: texlive is broken
@@ -84,10 +81,16 @@ find . -name '*.class' -delete
 %pom_remove_plugin org.apache.maven.plugins:maven-jxr-plugin src/jax-rs-api
 %pom_remove_plugin org.apache.maven.plugins:maven-checkstyle-plugin src/jax-rs-api
 %pom_remove_plugin org.codehaus.mojo:buildnumber-maven-plugin src/jax-rs-api
+%pom_remove_plugin org.apache.maven.plugins:maven-source-plugin src/jax-rs-api
+%pom_remove_plugin org.apache.maven.plugins:maven-deploy-plugin src/jax-rs-api
+
+%pom_xpath_remove "pom:plugin[pom:artifactId = 'maven-javadoc-plugin' ]/pom:executions" src/jax-rs-api
 
 %pom_xpath_remove "pom:build/pom:finalName" src/jax-rs-api
 
 sed -i "s|dvips|pdftex|" spec/spec.tex
+
+sed -i '/check-module/d' src/jax-rs-api/pom.xml
 
 cp -p src/etc/config/copyright.txt .
 sed -i 's/\r//' copyright.txt src/examples/pom.xml
@@ -125,6 +128,9 @@ cd src/jax-rs-api
 %endif
 
 %changelog
+* Fri May 08 2015 gil cattaneo <puntogil@libero.it> 2.0.1-1
+- update to 2.0.1
+
 * Tue Feb 03 2015 gil cattaneo <puntogil@libero.it> 2.0-7
 - introduce license macro
 

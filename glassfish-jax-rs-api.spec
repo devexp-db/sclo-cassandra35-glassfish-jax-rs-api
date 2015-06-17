@@ -3,7 +3,7 @@
 %global oname javax.ws.rs-api
 Name:          glassfish-jax-rs-api
 Version:       2.0.1
-Release:       1%{?dist}
+Release:       2%{?dist}
 Summary:       JAX-RS API Specification (JSR 339)
 License:       CDDL or GPLv2 with exceptions
 URL:           http://jax-rs-spec.java.net/
@@ -128,6 +128,9 @@ cd src/jax-rs-api
 %endif
 
 %changelog
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.0.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Fri May 08 2015 gil cattaneo <puntogil@libero.it> 2.0.1-1
 - update to 2.0.1
 

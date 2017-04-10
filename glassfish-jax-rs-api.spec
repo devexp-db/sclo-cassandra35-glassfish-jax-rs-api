@@ -1,80 +1,44 @@
+%{?scl:%scl_package glassfish-jax-rs-api}
+%{!?scl:%global pkg_name %{name}}
+
 %global namedreltag %{nil}
 %global namedversion %{version}%{?namedreltag}
 %global oname javax.ws.rs-api
-Name:          glassfish-jax-rs-api
-Version:       2.0.1
-Release:       4%{?dist}
-Summary:       JAX-RS API Specification (JSR 339)
-License:       CDDL or GPLv2 with exceptions
-URL:           http://jax-rs-spec.java.net/
+
+Name:		%{?scl_prefix}glassfish-jax-rs-api
+Version:	2.0.1
+Release:	5%{?dist}
+Summary:	JAX-RS API Specification (JSR 339)
+License:	CDDL or GPLv2 with exceptions
+URL:		http://jax-rs-spec.java.net/
 # git clone git://java.net/jax-rs-spec~api glassfish-jax-rs-api
 # (cd glassfish-jax-rs-api/ && git archive --format=tar --prefix=glassfish-jax-rs-api-2.0.1/ 2.0.1 | xz > ../glassfish-jax-rs-api-2.0.1.tar.xz)
-Source0:       %{name}-%{namedversion}.tar.xz
+Source0:	%{pkg_name}-%{namedversion}.tar.xz
 
-BuildRequires: junit
-BuildRequires: jvnet-parent
-
-BuildRequires: maven-local
-BuildRequires: maven-plugin-bundle
-BuildRequires: maven-resources-plugin
-BuildRequires: spec-version-maven-plugin
-
-# Disabled on rawhide: texlive is broken
-%if 0
-# This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013)
-# restricted \write18 enabled.
-# kpathsea: Running mktexfmt pdflatex.fmt
-# I can't find the format file `pdflatex.fmt'!
-# make: *** [spec.pdf] Error 1
-BuildRequires: make
-BuildRequires: texlive-amsfonts
-BuildRequires: texlive-base
-BuildRequires: texlive-bibtex-bin
-BuildRequires: texlive-cm
-BuildRequires: texlive-courier
-BuildRequires: texlive-dvips
-BuildRequires: texlive-fancyhdr
-BuildRequires: texlive-float
-BuildRequires: texlive-framed
-BuildRequires: texlive-graphics
-BuildRequires: texlive-helvetic
-BuildRequires: texlive-hyperref
-BuildRequires: texlive-ifxetex
-BuildRequires: texlive-latex-bin-bin
-BuildRequires: texlive-latexconfig
-BuildRequires: texlive-moreverb
-BuildRequires: texlive-oberdiek
-BuildRequires: texlive-pdftex-def
-BuildRequires: texlive-psnfss
-BuildRequires: texlive-texconfig
-BuildRequires: texlive-times
-BuildRequires: texlive-tools
-%endif
-
-BuildArch:     noarch
+BuildRequires:	%{?scl_prefix_java_common}junit
+BuildRequires:	%{?scl_prefix_maven}jvnet-parent
+BuildRequires:	%{?scl_prefix_maven}maven-local
+BuildRequires:	%{?scl_prefix_maven}maven-plugin-bundle
+BuildRequires:	%{?scl_prefix_maven}maven-resources-plugin
+BuildRequires:	%{?scl_prefix_maven}spec-version-maven-plugin
+%{?scl:Requires: %scl_runtime}
+BuildArch:	noarch
 
 %description
 JAX-RS Java API for RESTful Web Services (JSR 339).
 
 %package javadoc
-Summary:       Javadoc for %{name}
+Summary:	Javadoc for %{name}
 
 %description javadoc
 This package contains javadoc for %{name}.
 
-%if 0
-%package manual
-Summary:       Manual for %{name}
-
-%description manual
-This package contains documentation for %{name}.
-%endif
-
 %prep
-%setup -q -n %{name}-%{namedversion}
+%setup -q -n %{pkg_name}-%{namedversion}
 find . -name '*.jar' -delete
 find . -name '*.class' -delete
 
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 %pom_remove_plugin org.glassfish.copyright:glassfish-copyright-maven-plugin src/jax-rs-api
 
 # Reporting mojo's can only be called from ReportDocumentRender
@@ -87,6 +51,7 @@ find . -name '*.class' -delete
 %pom_xpath_remove "pom:plugin[pom:artifactId = 'maven-javadoc-plugin' ]/pom:executions" src/jax-rs-api
 
 %pom_xpath_remove "pom:build/pom:finalName" src/jax-rs-api
+%{?scl:EOF}
 
 sed -i "s|dvips|pdftex|" spec/spec.tex
 
@@ -99,20 +64,19 @@ sed -i 's/\r//' copyright.txt src/examples/pom.xml
 
 (
 cd src/jax-rs-api
-%mvn_file :%{oname} %{name}
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
+%mvn_file :%{oname} %{pkg_name}
 %mvn_build
+%{?scl:EOF}
 )
-
-%if 0
-cd spec
-make clean all
-%endif
 
 %install
 
 (
 cd src/jax-rs-api
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 %mvn_install
+%{?scl:EOF}
 )
 
 %files -f src/jax-rs-api/.mfiles
@@ -121,13 +85,10 @@ cd src/jax-rs-api
 %files javadoc -f src/jax-rs-api/.mfiles-javadoc
 %license copyright.txt
 
-%if 0
-%files manual
-%doc spec/spec.pdf src/examples
-%license copyright.txt
-%endif
-
 %changelog
+* Mon Apr 10 2017 Tomas Repik <trepik@redhat.com> - 2.0.1-5
+- scl conversion
+
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.0.1-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
